@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vault Web{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark vault-navbar">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="{% url 'home' %}">Vault Web</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Accueil</a>
+                    </li>
+                    {% if user.is_authenticated and request.session.otp_verified %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'password_list' %}">Mes mots de passe</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'password_generator' %}">Generateur</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="navbar-text mr-3">Connecte : {{ user.username }}</span>
+                        </li>
+                        {% if not request.session.otp_verified %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'verify_otp' %}">Verifier OTP</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}">Deconnexion</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item mr-2">
+                            <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Connexion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning btn-sm" href="{% url 'register' %}">Inscription</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-5">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

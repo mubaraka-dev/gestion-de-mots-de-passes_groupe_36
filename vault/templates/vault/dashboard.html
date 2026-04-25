@@ -1,0 +1,79 @@
+{% extends "vault/base.html" %}
+
+{% block title %}Tableau de bord | Vault Web{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="h3">Tableau de bord</h1>
+        <p class="text-muted mb-0">Bienvenue dans votre espace securise, {{ user.username }}.</p>
+    </div>
+    <div class="col-md-4 text-md-right mt-3 mt-md-0">
+        <a href="{% url 'password_add' %}" class="btn btn-primary">Ajouter une entree</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Entrees enregistrees</h5>
+                <p class="display-4 font-weight-bold">{{ entry_count }}</p>
+                <a href="{% url 'password_list' %}" class="btn btn-outline-primary">Voir la liste</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Generateur</h5>
+                <p class="card-text">Produisez un mot de passe fort cote backend.</p>
+                <a href="{% url 'password_generator' %}" class="btn btn-outline-success">Generer</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Administration</h5>
+                <p class="card-text">Accedez au panneau Django si vous etes superutilisateur.</p>
+                <a href="/admin/" class="btn btn-outline-dark">Admin</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Dernieres mises a jour</h2>
+        {% if recent_entries %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Identifiant</th>
+                            <th>Modifie le</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in recent_entries %}
+                            <tr>
+                                <td>{{ entry.service_name }}</td>
+                                <td>{{ entry.username }}</td>
+                                <td>{{ entry.updated_at|date:"d/m/Y H:i" }}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'password_detail' entry.pk %}" class="btn btn-sm btn-outline-primary">Detail</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">Aucune entree pour le moment.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

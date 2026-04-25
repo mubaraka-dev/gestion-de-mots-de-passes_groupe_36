@@ -1,0 +1,35 @@
+{% extends "vault/base.html" %}
+
+{% block title %}Verification OTP | Vault Web{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-3">Verification OTP</h2>
+                <p class="text-muted">
+                    Pour ce TP, le code OTP est affiche dans la console du serveur Django.
+                    Sa duree de validite est de {{ otp_validity_seconds }} secondes.
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success btn-block">Valider l'OTP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

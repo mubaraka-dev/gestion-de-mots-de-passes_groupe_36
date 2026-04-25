@@ -1,0 +1,54 @@
+{% extends "vault/base.html" %}
+
+{% block title %}Accueil | Vault Web{% endblock %}
+
+{% block content %}
+<div class="jumbotron vault-hero shadow-sm">
+    <h1 class="display-4 font-weight-bold">Coffre-fort web de mots de passe</h1>
+    <p class="lead mb-4">
+        Une application Django pedagogique qui chiffre les mots de passe avec Fernet,
+        protege l'acces avec un OTP et centralise vos identifiants sensibles.
+    </p>
+    <div class="d-flex flex-wrap">
+        {% if user.is_authenticated and request.session.otp_verified %}
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg mr-2">Acceder au coffre</a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg mr-2">Creer un compte</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Se connecter</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Chiffrement Fernet</h5>
+                <p class="card-text">
+                    Les mots de passe enregistres sont chiffres avant d'etre stockes en base SQLite.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Double verification</h5>
+                <p class="card-text">
+                    Une etape OTP est imposee apres la connexion pour simuler une authentification forte.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Gestion centralisee</h5>
+                <p class="card-text">
+                    Liste, ajout, modification, suppression et generation de mots de passe securises.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
