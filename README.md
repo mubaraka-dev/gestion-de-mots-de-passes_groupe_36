@@ -24,7 +24,7 @@ L'objectif est de proposer une application simple et fonctionnelle en local avec
 - inscription d'un utilisateur ;
 - connexion avec nom d'utilisateur et mot de passe ;
 - verification OTP obligatoire apres connexion ;
-- affichage du code OTP dans la console du serveur pour le TP ;
+- affichage du code OTP sur la page de verification pour faciliter le test en ligne ;
 - tableau de bord apres validation OTP ;
 - ajout d'une entree de mot de passe ;
 - liste des mots de passe de l'utilisateur connecte ;
@@ -59,7 +59,7 @@ gestionnaire-MP/
 2. Installer les dependances :
 
 ```bash
-pip install django cryptography
+pip install -r requirements.txt
 ```
 
 3. Generer une cle Fernet si vous souhaitez remplacer la cle de demonstration :
@@ -85,6 +85,26 @@ python manage.py runserver
 
 Ensuite, ouvrir `http://127.0.0.1:8000/`.
 
+## Tester l'application en ligne
+
+L'application est disponible sur Render a l'adresse suivante :
+
+```text
+https://gestion-de-mots-de-passes-groupe-36.onrender.com/
+```
+
+Pour tester le fonctionnement :
+
+1. ouvrir l'application avec le lien ci-dessus ;
+2. creer un compte avec la page d'inscription, ou utiliser un compte de test si un identifiant a ete fourni ;
+3. se connecter avec le nom d'utilisateur et le mot de passe ;
+4. apres la connexion, l'application redirige vers la page `Verification OTP` ;
+5. copier le code OTP affiche en bas du bloc de verification ;
+6. coller ce code dans le champ OTP puis valider ;
+7. tester le tableau de bord, l'ajout d'un mot de passe, la liste, le detail, la modification, la suppression et le generateur.
+
+Remarque importante sur Render : l'application est hebergee sur le forfait gratuit. Quand elle n'est pas consultee pendant plusieurs minutes, Render peut la mettre en veille automatiquement. Dans ce cas, le premier chargement peut etre lent ou sembler bloquer. Il suffit d'attendre quelques secondes puis d'actualiser la page. Ce comportement vient du plan gratuit Render, pas d'une erreur de l'application.
+
 ## Chiffrement AES / Fernet
 
 Le projet utilise la bibliotheque `cryptography` et le module `Fernet`.
@@ -107,7 +127,7 @@ Apres une connexion reussie :
 1. l'utilisateur est authentifie par Django ;
 2. un code OTP a 6 chiffres est genere ;
 3. le code OTP est stocke temporairement dans la session ;
-4. le code est affiche dans la console du serveur pour le TP ;
+4. le code est affiche sur la page de verification OTP pour le TP ;
 5. l'utilisateur doit saisir le bon code sur la page de verification ;
 6. si le code est correct, la session stocke `otp_verified=True`.
 
@@ -119,8 +139,8 @@ Tant que l'OTP n'est pas valide, l'acces au coffre et aux routes sensibles reste
 2. Ouvrir l'application dans le navigateur.
 3. Creer un compte avec la page d'inscription.
 4. Se connecter avec le compte cree.
-5. Observer dans la console du serveur le code OTP affiche.
-6. Saisir ce code dans la page de verification OTP.
+5. Observer le code OTP affiche en bas de la page de verification.
+6. Copier ce code et le saisir dans le champ OTP.
 7. Acceder au tableau de bord.
 8. Ajouter une entree de mot de passe.
 9. Verifier que la liste n'affiche jamais le mot de passe en clair.
@@ -211,8 +231,8 @@ celle fournie par Django par defaut.
 
 ## Limites du TP
 
-- l'OTP est affiche dans la console et non envoye par SMS ou email ;
-- la cle Fernet  est laissee dans `settings.py` pour la demonstration ;
+- l'OTP est affiche sur la page de verification et non envoye par SMS ou email ;
+- la cle Fernet est fournie dans le fichier `.env` pour faciliter la demonstration ;
 - le projet utilise SQLite, adapte a un TP mais pas a une production ;
 - le mot de passe dechiffre est visible sur la page de detail ;
 - aucune journalisation avancee ni rotation de cle n'est implemente.
@@ -231,4 +251,3 @@ celle fournie par Django par defaut.
 
 login: 
 mp: 3messiers89
-
