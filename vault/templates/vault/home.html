@@ -6,8 +6,8 @@
 <div class="jumbotron vault-hero shadow-sm">
     <h1 class="display-4 font-weight-bold">Coffre-fort web de mots de passe</h1>
     <p class="lead mb-4">
-        Une application Django pedagogique qui chiffre les mots de passe avec Fernet,
-        protege l'acces avec un OTP et centralise vos identifiants sensibles.
+        Une application Django qui chiffre les mots de passe avec Fernet,
+        protege l'acces avec un OTP et centralise les identifiants sensibles.
     </p>
     <div class="d-flex flex-wrap">
         {% if user.is_authenticated and request.session.otp_verified %}
