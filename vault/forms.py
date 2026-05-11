@@ -21,13 +21,19 @@ class BootstrapFormMixin:
 
 
 class RegisterForm(BootstrapFormMixin, UserCreationForm):
+    """Formulaire d'inscription avec l'adresse e-mail obligatoire."""
+
     email = forms.EmailField(required=True)
 
     class Meta:
+        """Associe le formulaire au modele utilisateur natif de Django."""
+
         model = User
         fields = ("username", "email", "password1", "password2")
 
     def save(self, commit=True):
+        """Enregistre l'utilisateur en ajoutant l'e-mail au modele Django."""
+
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"]
         if commit:
@@ -36,11 +42,15 @@ class RegisterForm(BootstrapFormMixin, UserCreationForm):
 
 
 class LoginForm(BootstrapFormMixin, AuthenticationForm):
+    """Formulaire de connexion base sur l'authentification Django."""
+
     username = forms.CharField(widget=forms.TextInput(attrs={"autofocus": True}))
     password = forms.CharField(widget=forms.PasswordInput())
 
 
 class OTPVerificationForm(BootstrapFormMixin, forms.Form):
+    """Formulaire de saisie du code OTP a six chiffres."""
+
     otp_code = forms.CharField(
         label="Code OTP",
         max_length=6,
@@ -50,6 +60,12 @@ class OTPVerificationForm(BootstrapFormMixin, forms.Form):
 
 
 class PasswordEntryForm(BootstrapFormMixin, forms.ModelForm):
+    """Formulaire de creation et modification d'une entree du coffre.
+
+    Le champ ``plain_password`` sert uniquement a recevoir le mot de passe en
+    clair depuis l'interface. Il n'est pas sauvegarde directement dans le modele.
+    """
+
     plain_password = forms.CharField(
         label="Mot de passe",
         widget=forms.PasswordInput(render_value=True),
@@ -58,6 +74,8 @@ class PasswordEntryForm(BootstrapFormMixin, forms.ModelForm):
     )
 
     class Meta:
+        """Champs exposes a l'utilisateur pour une entree de mot de passe."""
+
         model = PasswordEntry
         fields = ("service_name", "username", "plain_password", "note")
         widgets = {
@@ -65,6 +83,8 @@ class PasswordEntryForm(BootstrapFormMixin, forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """Rend le mot de passe obligatoire uniquement a la creation."""
+
         self.is_update = kwargs.pop("is_update", False)
         super().__init__(*args, **kwargs)
         if not self.is_update:
@@ -75,6 +95,8 @@ class PasswordEntryForm(BootstrapFormMixin, forms.ModelForm):
             )
 
     def clean_plain_password(self):
+        """Verifie qu'un nouveau mot de passe est fourni lors d'une creation."""
+
         password = self.cleaned_data.get("plain_password", "")
         if not password and not self.is_update:
             raise forms.ValidationError("Veuillez saisir un mot de passe.")
@@ -82,6 +104,8 @@ class PasswordEntryForm(BootstrapFormMixin, forms.ModelForm):
 
 
 class PasswordGeneratorForm(BootstrapFormMixin, forms.Form):
+    """Parametres utilises pour generer un mot de passe robuste."""
+
     length = forms.IntegerField(
         label="Longueur",
         min_value=8,
@@ -98,6 +122,8 @@ class PasswordGeneratorForm(BootstrapFormMixin, forms.Form):
     )
 
     def clean(self):
+        """Controle la coherence entre la longueur et les types de caracteres."""
+
         cleaned_data = super().clean()
         choices = [
             cleaned_data.get("include_uppercase"),
@@ -116,6 +142,8 @@ class PasswordGeneratorForm(BootstrapFormMixin, forms.Form):
 
     @staticmethod
     def character_sets():
+        """Retourne les ensembles de caracteres disponibles pour la generation."""
+
         return {
             "include_uppercase": string.ascii_uppercase,
             "include_lowercase": string.ascii_lowercase,

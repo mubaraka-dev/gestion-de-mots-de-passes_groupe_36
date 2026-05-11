@@ -103,7 +103,7 @@ LOGIN_REDIRECT_URL = "verify_otp"
 LOGOUT_REDIRECT_URL = "home"
 
 
-# Cle Fernet de demonstration pour le TP.
+# Cle Fernet de demonstration.
 # En pratique, il faut la fournir par variable d'environnement.
 FERNET_KEY = os.environ.get(
     "FERNET_KEY",

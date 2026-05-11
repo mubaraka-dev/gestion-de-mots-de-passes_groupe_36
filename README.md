@@ -8,7 +8,7 @@ Vault Web est une application Django de TP qui permet de stocker et gerer des mo
 - un second facteur OTP apres la connexion ;
 - le chiffrement des mots de passe stockes avec Fernet, un mecanisme reposant sur AES.
 
-L'objectif est de proposer une application simple, pedagogique et fonctionnelle en local avec SQLite.
+L'objectif est de proposer une application simple et fonctionnelle en local avec SQLite.
 
 ## Technologies utilisees
 
@@ -138,10 +138,81 @@ Tant que l'OTP n'est pas valide, l'acces au coffre et aux routes sensibles reste
 - aucun stockage de mot de passe en clair ;
 - distinction entre le mot de passe du compte Django et les mots de passe stockes dans le coffre.
 
+### Protection native Django : CSRF, XSS et injections SQL
+
+Le projet s'appuie sur les mecanismes natifs de Django pour reduire les risques
+classiques des applications web.
+
+Dans `gestionnaire/settings.py`, la liste `MIDDLEWARE` active notamment :
+
+- `django.middleware.security.SecurityMiddleware`, pour appliquer des protections
+  HTTP de base ;
+- `django.contrib.sessions.middleware.SessionMiddleware`, pour gerer les sessions
+  utilisateur ;
+- `django.middleware.csrf.CsrfViewMiddleware`, pour bloquer les requetes POST
+  sans jeton CSRF valide ;
+- `django.middleware.clickjacking.XFrameOptionsMiddleware`, pour limiter le
+  clickjacking.
+
+Les formulaires HTML contiennent le jeton CSRF avec `{% csrf_token %}`. On le
+retrouve par exemple dans les templates `login.html`, `register.html`,
+`verify_otp.html`, `password_form.html`, `password_generator.html` et
+`password_confirm_delete.html`.
+
+Pour les attaques XSS, les templates Django echappent automatiquement les
+variables affichees avec `{{ ... }}`. Les valeurs utilisateur comme
+`{{ entry.service_name }}`, `{{ entry.username }}` ou `{{ entry.note }}` sont donc
+affichees comme du texte et non interpretees comme du HTML. Le projet n'utilise
+pas `|safe`, `mark_safe` ou `autoescape off`.
+
+Pour les injections SQL, le projet utilise l'ORM Django au lieu de construire des
+requetes SQL a la main. Les acces aux donnees passent par des appels comme :
+
+```python
+PasswordEntry.objects.filter(user=request.user)
+get_object_or_404(PasswordEntry, pk=pk, user=request.user)
+```
+
+Django parametre alors les requetes SQL generees et evite l'injection par
+concatenation de chaines.
+
+### Sessions securisees et expiration automatique
+
+Les sessions sont activees par `SessionMiddleware` dans `gestionnaire/settings.py`.
+Elles servent notamment a stocker temporairement l'etat de verification OTP :
+
+```python
+request.session["otp_code"] = otp_code
+request.session["otp_generated_at"] = time.time()
+request.session["otp_verified"] = False
+```
+
+L'application impose une expiration automatique du code OTP avec
+`OTP_VALIDITY_SECONDS = 300`, soit 5 minutes. Lors de la verification, si le code
+est trop ancien, les informations OTP sont retirees de la session et
+l'utilisateur est deconnecte :
+
+```python
+if time.time() - generated_at > settings.OTP_VALIDITY_SECONDS:
+    request.session.pop("otp_code", None)
+    request.session.pop("otp_generated_at", None)
+    request.session["otp_verified"] = False
+    logout(request)
+```
+
+Cela protege l'acces au coffre apres la connexion : meme si l'utilisateur a
+fourni un nom d'utilisateur et un mot de passe corrects, il doit valider un OTP
+encore valide avant d'acceder aux vues sensibles protegees par `otp_required`.
+
+Remarque : le projet ne definit pas encore de reglage explicite comme
+`SESSION_COOKIE_AGE` ou `SESSION_EXPIRE_AT_BROWSER_CLOSE`. L'expiration stricte
+documentee ici concerne donc le code OTP ; l'expiration generale de session reste
+celle fournie par Django par defaut.
+
 ## Limites du TP
 
 - l'OTP est affiche dans la console et non envoye par SMS ou email ;
-- la cle Fernet peut etre laissee dans `settings.py` pour la demonstration ;
+- la cle Fernet  est laissee dans `settings.py` pour la demonstration ;
 - le projet utilise SQLite, adapte a un TP mais pas a une production ;
 - le mot de passe dechiffre est visible sur la page de detail ;
 - aucune journalisation avancee ni rotation de cle n'est implemente.
@@ -157,4 +228,4 @@ Tant que l'OTP n'est pas valide, l'acces au coffre et aux routes sensibles reste
 
 
 
-mp: 2Angles-89
+mp: 3messiers89
