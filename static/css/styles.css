@@ -61,6 +61,12 @@ body {
     border-radius: 0.6rem;
 }
 
+.otp-code {
+    color: #16324f;
+    letter-spacing: 0.08em;
+    line-height: 1;
+}
+
 .table td,
 .table th {
     vertical-align: middle;

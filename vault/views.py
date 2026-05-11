@@ -111,6 +111,7 @@ def verify_otp_view(request):
         "vault/verify_otp.html",
         {
             "form": form,
+            "otp_code": request.session.get("otp_code"),
             "otp_validity_seconds": settings.OTP_VALIDITY_SECONDS,
         },
     )

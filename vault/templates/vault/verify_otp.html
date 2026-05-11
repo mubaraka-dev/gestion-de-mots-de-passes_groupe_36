@@ -9,7 +9,7 @@
             <div class="card-body p-4">
                 <h2 class="h4 mb-3">Verification OTP</h2>
                 <p class="text-muted">
-                    Pour ce TP, le code OTP est affiche dans la console du serveur Django.
+                    Pour ce TP, le code OTP est affiche directement sur cette page.
                     Sa duree de validite est de {{ otp_validity_seconds }} secondes.
                 </p>
                 <form method="post">
@@ -28,6 +28,12 @@
                     {% endfor %}
                     <button type="submit" class="btn btn-success btn-block">Valider l'OTP</button>
                 </form>
+                {% if otp_code %}
+                    <div class="alert alert-warning text-center mt-4 mb-0">
+                        <div class="small text-uppercase font-weight-bold mb-2">Code OTP du TP</div>
+                        <div class="display-4 font-weight-bold otp-code">{{ otp_code }}</div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
