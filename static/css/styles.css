@@ -4,7 +4,43 @@ body {
 }
 
 .vault-navbar {
-    background: linear-gradient(90deg, #16324f 0%, #214d72 100%);
+    background: linear-gradient(90deg, #16324f 0%, #214d72 100%) !important;
+    border-bottom: 3px solid #f0b429;
+    box-shadow: 0 0.35rem 1rem rgba(22, 50, 79, 0.18);
+}
+
+.vault-navbar .navbar-brand,
+.vault-navbar .nav-link,
+.vault-navbar .navbar-text {
+    color: #ffffff !important;
+}
+
+.vault-navbar .navbar-brand {
+    letter-spacing: 0;
+}
+
+.vault-navbar .nav-link {
+    font-weight: 600;
+}
+
+.vault-navbar .nav-link:hover,
+.vault-navbar .nav-link:focus {
+    color: #ffd166 !important;
+}
+
+.vault-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.vault-navbar .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.85);
+    color: #ffffff;
+}
+
+.vault-navbar .btn-outline-light:hover,
+.vault-navbar .btn-outline-light:focus {
+    background-color: #ffffff;
+    color: #16324f;
 }
 
 .vault-hero {
